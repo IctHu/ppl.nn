@@ -255,7 +255,7 @@ void RegisterBuiltinOpImpls() {
     // U
     RegisterOptKernelCreator<UnsqueezeOp>("", "Unsqueeze", 1, 16);
     // W
-    RegisterOptKernelCreator<WhereOp>("", "Where", 9, 15);
+    RegisterOptKernelCreator<WhereOp>("", "Where", 9, 16);
     // X
     RegisterOptKernelCreator<WhereOp>("", "Xor", 9, 15);
 

@@ -60,7 +60,8 @@ bool ChannelShuffleFusion::CanFuseFirstReshape(ir::Node* node, const OptKernelOp
     if (attr_pair != data->attrs.end()) {
         auto param = (const ShapeOperationParam*)(attr_pair->second.get());
         auto matrix = param->alpha.find(shape_edge_id)->second;
-        if (matrix.numerator[1][matrix.MAXDIMSIZE] / matrix.denominator[1][matrix.MAXDIMSIZE] != 2) {
+        if (matrix.denominator[1][matrix.MAXDIMSIZE] == 0
+            || matrix.numerator[1][matrix.MAXDIMSIZE] / matrix.denominator[1][matrix.MAXDIMSIZE] != 2) {
             return false;
         }
         return true;
@@ -107,7 +108,8 @@ bool ChannelShuffleFusion::CanFuseSecondReshape(ir::Node* node, const OptKernelO
     if (attr_pair != data->attrs.end()) {
         auto param = (const ShapeOperationParam*)(attr_pair->second.get());
         auto matrix = param->alpha.find(shape_edge_id)->second;
-        if (matrix.numerator[1][matrix.MAXDIMSIZE] / matrix.denominator[1][matrix.MAXDIMSIZE] != -1) {
+        if (matrix.denominator[1][matrix.MAXDIMSIZE] == 0
+                || matrix.numerator[1][matrix.MAXDIMSIZE] / matrix.denominator[1][matrix.MAXDIMSIZE] != -1) {
             return false;
         }
         return true;

@@ -73,6 +73,20 @@ static RetCode ConvertFromHost(const PyTensor& py_tensor, const pybind11::buffer
     return RC_SUCCESS;
 }
 
+static RetCode SetByPtrAndShape(const PyTensor& py_tensor, uint64_t ptr, const std::vector<int64_t>& src_shape) {
+    auto tensor = py_tensor.ptr;
+
+    vector<int64_t> dims(src_shape.size());
+    for (pybind11::ssize_t i = 0; i < src_shape.size(); ++i) {
+        dims[i] = src_shape[i];
+    }
+
+    auto shape = tensor->GetShape();
+    shape->Reshape(dims);
+
+    return tensor->CopyFromHostAsync((void*)ptr);
+}
+
 // use original data type and format if `datatype` or `dataformat` are unknown
 static PyNdArray ConvertToHost(const PyTensor& py_tensor, datatype_t data_type, dataformat_t data_format) {
     auto tensor = py_tensor.ptr;
@@ -130,6 +144,11 @@ void RegisterTensor(pybind11::module* m) {
              [](PyTensor& tensor, uint64_t ptr) -> void {
                  tensor.ptr->SetBufferPtr((void*)ptr);
              })
+        .def("SetByTensor",
+             [](PyTensor& tensor, const PyTensor& src_tensor) -> RetCode {
+                 return tensor.ptr->CopyFromHostAsync(src_tensor.ptr->GetBufferPtr());
+             })
+        .def("SetByPtrAndShape", &SetByPtrAndShape)
         .def("GetDeviceContext",
              [](const PyTensor& tensor) -> PyDeviceContext {
                  return PyDeviceContext(tensor.ptr->GetDeviceContext());
@@ -145,6 +164,10 @@ void RegisterTensor(pybind11::module* m) {
              },
              pybind11::return_value_policy::reference)
         .def("ConvertFromHost", &ConvertFromHost)
+        .def("CopyToPtr",
+             [](PyTensor& tensor, uint64_t ptr) -> RetCode {
+                 return tensor.ptr->CopyToHostAsync((void*)ptr);
+             })
         .def("ConvertToHost", &ConvertToHost, pybind11::return_value_policy::move,
              pybind11::arg("datatype") = (ppl::common::datatype_t)ppl::common::DATATYPE_UNKNOWN,
              pybind11::arg("dataformat") = (ppl::common::dataformat_t)ppl::common::DATAFORMAT_NDARRAY);

@@ -234,7 +234,7 @@ ParamParserManager::ParamParserManager() {
                                PackScatterElementsParam);
     PPL_REGISTER_OP_WITHOUT_PARAM("", "ScatterND", 11, 15, nullptr);
     PPL_REGISTER_OP_WITHOUT_PARAM("", "SequenceAt", 11, 16, nullptr);
-    PPL_REGISTER_OP_WITHOUT_PARAM("", "Shape", 1, 14, nullptr);
+    PPL_REGISTER_OP_WITHOUT_PARAM("", "Shape", 1, 16, nullptr);
     PPL_REGISTER_OP_WITHOUT_PARAM("", "Sigmoid", 6, 16, nullptr);
     PPL_REGISTER_OP_WITHOUT_PARAM("", "Sign", 9, 16, nullptr);
     PPL_REGISTER_OP_WITHOUT_PARAM("", "Sin", 7, 16, nullptr);
