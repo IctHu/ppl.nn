@@ -80,8 +80,14 @@ double TuringHMMAImpgemm::ExcuteTimer(const ir::Node* node, OptKernelOptions& op
         return 0.0f;
     } else { // Give the default kernel
 #ifdef PPLNN_CUDA_ENABLE_KERNEL_CUT
-        attr_param_.extra_param.algo_info.algo_name = "nvSwzlSm75Fp16Conv_hmma1688_nhwc_fn_b32x256_w32x64_k8_buf2";
-        attr_param_.extra_param.algo_info.kid = 685;
+        auto shape_in1 = *options.tensors->find(node->GetInput(1))->second->GetShape();
+        if (shape_in1.GetDim(2) == 1 && shape_in1.GetDim(3) == 1) {
+            attr_param_.extra_param.algo_info.algo_name = "nvSwzlSm75Fp16Conv_hmma1688_nhwc_f1_b32x256_w32x64_k8_buf1";
+            attr_param_.extra_param.algo_info.kid = 620;
+        } else {
+            attr_param_.extra_param.algo_info.algo_name = "nv2spkSm75Fp16Conv_hmma1688_nhwc_fn_b64x128_w64x32_k8_s8_buf1";
+            attr_param_.extra_param.algo_info.kid = 210;
+        }
 #else
         attr_param_.extra_param.algo_info.algo_name = "nvSwzlSm75Fp16Conv_hmma1688_nhwc_fn_b128x64_w64x32_k64_buf2";
         attr_param_.extra_param.algo_info.kid = 5197;
@@ -287,7 +293,7 @@ void TuringHMMAImpgemm::ReshapeOnEdges(const ir::Node* node, std::map<edgeid_t, 
             continue;
         }
         auto shape = tensors->find(edge_id)->second->GetShape();
-        if (shape->GetDimCount() > 1)
+        if (shape->GetDimCount() != 1 || i == 0)
             shape->SetDataFormat(input_format);
         else
             shape->SetDataFormat(DATAFORMAT_NDARRAY);

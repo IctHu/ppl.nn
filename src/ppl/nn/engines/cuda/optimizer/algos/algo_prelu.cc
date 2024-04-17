@@ -43,17 +43,18 @@ void PReluAlgorithm::ReshapeOnEdges(const ir::Node* node, std::map<edgeid_t, std
             continue;
         }
         auto shape = tensors->find(edge_id)->second->GetShape();
-        if (i == 0 && shape->GetDimCount() > 1) {
-            shape->SetDataFormat(input_format);
-        } else {
+        // if (i == 0 && shape->GetDimCount() > 1) {
+        //     shape->SetDataFormat(input_format);
+        // } else {
             shape->SetDataFormat(DATAFORMAT_NDARRAY);
-        }
+        // }
     }
 
     for (uint32_t i = 0; i < node->GetOutputCount(); ++i) {
         auto edge_id = node->GetOutput(i);
         auto shape = tensors->find(edge_id)->second->GetShape();
-        shape->SetDataFormat(output_format);
+        // shape->SetDataFormat(output_format);
+        shape->SetDataFormat(DATAFORMAT_NDARRAY);
     }
     return;
 }

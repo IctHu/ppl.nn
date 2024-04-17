@@ -21,6 +21,7 @@
 #include "../common/py_ndarray.h"
 #include "ppl/nn/runtime/tensor.h"
 #include "pybind11/pybind11.h"
+#include "pybind11/stl.h"
 
 namespace ppl { namespace nn { namespace python {
 
